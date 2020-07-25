@@ -1,0 +1,17 @@
+---
+## Vars: MySQL
+
+root_db_password : redmyhat
+
+
+## Vars: Nginx
+
+domain: "example.com"
+project: "example"
+
+
+## Vars: WordPress
+
+wp_db: "{{ project }}-db"
+wp_user: "{{ project }}-user"
+wp_password: "{{ project }}-db-pass"

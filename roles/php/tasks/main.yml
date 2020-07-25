@@ -1,0 +1,14 @@
+---
+- name: PHP For Nginx & MariaDB
+  apt:
+    install_recommends: yes
+    pkg:
+      - php-fpm
+      - php-mysql
+    state: latest
+
+- name: Reload PHP-FPM
+  service:
+    name: php7.2-fpm
+    state: restarted
+    enabled: yes

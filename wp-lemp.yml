@@ -1,0 +1,11 @@
+---
+- name: WordPress On Lemp
+  hosts: all
+  become: True
+  gather_facts: False
+  roles:
+    - preup
+    - nginx
+    - php
+    - mysql
+    - wordpress

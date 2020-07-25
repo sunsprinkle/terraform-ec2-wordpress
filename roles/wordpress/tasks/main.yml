@@ -1,0 +1,56 @@
+---
+- name: PHP Packages For WordPress
+  apt:
+    install_recommends: yes
+    pkg:
+      - php-curl
+      - php-gd
+      - php-intl
+      - php-mbstring
+      - php-soap
+      - php-xml
+      - php-xmlrpc
+      - php-zip
+    state: latest
+
+- name: WordPress DB
+  mysql_db:
+    name: "{{ wp_db }}"
+    state: present
+    login_user: root
+    login_password: "{{ root_db_password }}"
+
+- name: WordPress User
+  mysql_user:
+    name: "{{ wp_user }}"
+    password: "{{ wp_password }}"
+    priv: "{{ wp_db }}.*:ALL"
+    state: present
+    login_user: root
+    login_password: "{{ root_db_password }}"
+
+- name: Download and unpack latest WordPress
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    dest: "/var/www/html"
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Set up wp-config
+  template:
+    src: "wp-config.php.j2"
+    dest: "/var/www/html/wp-config.php"
+
+- name: Set ownership
+  file:
+    path: "/var/www/html"
+    state: directory
+    recurse: yes
+    owner: www-data
+    group: www-data
+
+- name: Set permissions for directories
+  shell: "/usr/bin/find /var/www/html/ -type d -exec chmod 750 {} \\;"
+
+- name: Set permissions for files
+  shell: "/usr/bin/find /var/www/html/ -type f -exec chmod 640 {} \\;"

@@ -1,0 +1,29 @@
+---
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Server Block Conf
+  block:
+    - name: WordPress Nginx Conf
+      template:
+        src: 'lemp-wp-conf.j2'
+        dest: '/etc/nginx/sites-available/{{domain}}'
+
+    - name: Addd Symlink
+      file:
+        src: /etc/nginx/sites-available/{{domain}}
+        dest: /etc/nginx/sites-enabled/{{domain}}
+        state: link
+
+- name: Unlink Default
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Enable Nginx on Boot
+  service:
+    name: nginx
+    state: restarted
+    enabled: yes

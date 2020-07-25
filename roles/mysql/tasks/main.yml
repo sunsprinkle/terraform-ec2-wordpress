@@ -1,0 +1,39 @@
+---
+- name: Install MariaDB
+  apt:
+    install_recommends: yes
+    pkg:
+      - mariadb-server
+      - python3-mysqldb
+    state: latest
+
+- name: Set root Pass
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ root_db_password }}"
+  with_items:
+    - 127.0.0.1
+    - ::1
+    - localhost
+
+- name: Clear Anon Users
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "{{ root_db_password }}"
+
+- name: Clear test DBs
+  mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: "{{ root_db_password }}"
+
+- name: Reload MySQL
+  service:
+    name: mysql
+    state: restarted
+    enabled: yes
